@@ -8,7 +8,12 @@ import {
   AnimatePresence,
 } from "framer-motion";
 
-type Profile = { id: string; name: string; bio: string; photos: string[] };
+type Profile = {
+  id: string;
+  name: string;
+  bio: string;
+  photos: string[];
+};
 
 export default function SwipeDeck() {
   const initial: Profile[] = [
@@ -47,9 +52,9 @@ export default function SwipeDeck() {
 
   const commitSwipe = (dir: "left" | "right" | "up") => {
     const emoji: Record<typeof dir, string> = {
-      left: "🍺", // Vovo
+      left: "🍺",  // Vovo
       right: "🙈", // Doro
-      up: "⚖️", // Doro et Vovo
+      up: "⚖️",   // Doro et Vovo
     } as const;
 
     setEffectEmoji(emoji[dir]);
@@ -62,7 +67,7 @@ export default function SwipeDeck() {
 
   return (
     <div className="relative w-full max-w-md">
-      {/* Zone pile de cartes */}
+      {/* Zone du deck (3/4) */}
       <div className="aspect-[3/4] relative select-none z-10">
         <AnimatePresence initial={false}>
           {stack.map((p, i) => {
@@ -82,7 +87,7 @@ export default function SwipeDeck() {
           })}
         </AnimatePresence>
 
-        {/* Emoji géant au commit */}
+        {/* Emoji géant quand un swipe est validé */}
         <AnimatePresence>
           {effectEmoji && (
             <motion.div
@@ -99,6 +104,37 @@ export default function SwipeDeck() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* === Badges de direction — en bas du DECK (style Tinder) === */}
+        <div className="absolute bottom-4 left-0 right-0 z-50 flex justify-center gap-6 pointer-events-none">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/vovo-yellow.png"
+            alt="Vovo (swipe gauche)"
+            width={72}
+            height={72}
+            className="pointer-events-auto cursor-pointer drop-shadow-lg hover:scale-105 transition-transform"
+            onClick={() => commitSwipe("left")}
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/doro-vovo-red.png"
+            alt="Doro et Vovo (swipe haut)"
+            width={72}
+            height={72}
+            className="pointer-events-auto cursor-pointer drop-shadow-lg hover:scale-105 transition-transform"
+            onClick={() => commitSwipe("up")}
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/doro-blue.png"
+            alt="Doro (swipe droite)"
+            width={72}
+            height={72}
+            className="pointer-events-auto cursor-pointer drop-shadow-lg hover:scale-105 transition-transform"
+            onClick={() => commitSwipe("right")}
+          />
+        </div>
       </div>
     </div>
   );
@@ -123,7 +159,7 @@ function Card({
   const y = useMotionValue(0);
   const rotate = useTransform(x, [-240, 0, 240], [-18, 0, 18]);
 
-  // Labels géants pendant le drag
+  // Progression des labels pendant le drag
   const leftProg = useTransform(x, [-10, -140], [0, 1], { clamp: true });
   const rightProg = useTransform(x, [10, 140], [0, 1], { clamp: true });
   const upProg = useTransform(y, [-10, -140], [0, 1], { clamp: true });
@@ -136,7 +172,7 @@ function Card({
     if (dy < -t) return onSwipe("up");
   };
 
-  // Effet pile : carte suivante visible
+  // Effet pile (carte suivante visible)
   const baseScale = isTop ? 1 : isNext ? 0.965 : 0.93;
   const baseY = isTop ? 0 : isNext ? 10 : 22;
 
@@ -149,7 +185,6 @@ function Card({
       transition={{ type: "spring", stiffness: 300, damping: 28 }}
       style={{ zIndex: isTop ? 30 : isNext ? 20 : 10 }}
     >
-      {/* ----------- CONTENEUR DE LA CARTE ----------- */}
       <motion.div
         drag={isTop}
         dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
@@ -157,7 +192,7 @@ function Card({
         style={{ x, y, rotate, willChange: "transform" }}
         className="w-full h-full rounded-[48px] md:rounded-[56px] overflow-hidden bg-black relative ring-1 ring-black/5"
       >
-        {/* Photo */}
+        {/* Photo (coins arrondis grâce à overflow-hidden du parent) */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={p.photos[photoIndex % p.photos.length]}
@@ -175,37 +210,6 @@ function Card({
         <div className="absolute bottom-4 left-4 right-4 text-white drop-shadow">
           <h2 className="text-2xl font-semibold">{p.name}</h2>
           <p className="text-sm opacity-90">{p.bio}</p>
-        </div>
-
-        {/* === BADGES — medium/large, centrés en bas (Tinder-like) === */}
-        <div className="absolute bottom-6 left-0 right-0 z-50 flex justify-center gap-6">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/vovo-yellow.png"
-            alt="Vovo (swipe gauche)"
-            width={80}
-            height={80}
-            className="pointer-events-auto cursor-pointer drop-shadow-lg hover:scale-105 transition-transform"
-            onClick={() => onSwipe("left")}
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/doro-vovo-red.png"
-            alt="Doro et Vovo (swipe haut)"
-            width={80}
-            height={80}
-            className="pointer-events-auto cursor-pointer drop-shadow-lg hover:scale-105 transition-transform"
-            onClick={() => onSwipe("up")}
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/doro-blue.png"
-            alt="Doro (swipe droite)"
-            width={80}
-            height={80}
-            className="pointer-events-auto cursor-pointer drop-shadow-lg hover:scale-105 transition-transform"
-            onClick={() => onSwipe("right")}
-          />
         </div>
 
         {/* Labels géants pendant le drag */}
@@ -236,7 +240,6 @@ function Card({
           </span>
         </motion.div>
       </motion.div>
-      {/* ----------- FIN CONTENEUR DE LA CARTE ----------- */}
     </motion.div>
   );
 }
