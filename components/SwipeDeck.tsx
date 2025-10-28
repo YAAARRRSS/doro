@@ -1,15 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
 
 type Profile = { id: string; name: string; bio: string; photos: string[] };
 
 export default function SwipeDeck() {
   const initial: Profile[] = [
-    { id: "1", name: "Léa, 25", bio: "Escalade • Café • Voyages", photos: ["https://picsum.photos/id/1011/800/1200","https://picsum.photos/id/1012/800/1200"] },
-    { id: "2", name: "Adam, 28", bio: "Tech • Vélo • Cuisine", photos: ["https://picsum.photos/id/1015/800/1200","https://picsum.photos/id/1016/800/1200"] },
-    { id: "3", name: "Maya, 27", bio: "Piano • Randonnée • Chats", photos: ["https://picsum.photos/id/1024/800/1200","https://picsum.photos/id/1025/800/1200"] },
+    { id: "1", name: "Léa, 25",  bio: "Escalade • Café • Voyages",
+      photos: ["https://picsum.photos/id/1011/800/1200","https://picsum.photos/id/1012/800/1200"] },
+    { id: "2", name: "Adam, 28", bio: "Tech • Vélo • Cuisine",
+      photos: ["https://picsum.photos/id/1015/800/1200","https://picsum.photos/id/1016/800/1200"] },
+    { id: "3", name: "Maya, 27", bio: "Piano • Randonnée • Chats",
+      photos: ["https://picsum.photos/id/1024/800/1200","https://picsum.photos/id/1025/800/1200"] },
   ];
 
   const [stack, setStack] = useState<Profile[]>(initial);
@@ -26,18 +29,9 @@ export default function SwipeDeck() {
     }, 700);
   };
 
-  // ⬇️ écoute les clics des badges du footer
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const dir = (e as CustomEvent<"left" | "right" | "up">).detail;
-      if (dir) commitSwipe(dir);
-    };
-    window.addEventListener("deck-swipe", handler as EventListener);
-    return () => window.removeEventListener("deck-swipe", handler as EventListener);
-  }, []);
-
   return (
     <div className="relative w-full max-w-md">
+      {/* Conteneur 3/4 qui sert d’ancre pour les badges */}
       <div className="aspect-[3/4] relative select-none z-10">
         <AnimatePresence initial={false}>
           {stack.map((p, i) => {
@@ -57,11 +51,11 @@ export default function SwipeDeck() {
           })}
         </AnimatePresence>
 
-        {/* Émoji géant au commit */}
+        {/* Emoji géant lors du swipe */}
         <AnimatePresence>
           {effectEmoji && (
             <motion.div
-              className="absolute inset-0 flex items-center justify-center pointer-events-none z-50"
+              className="absolute inset-0 flex items-center justify-center pointer-events-none z-[90]"
               initial={{ opacity: 0, scale: 0.85, y: 10 }}
               animate={{ opacity: 1, scale: 1.25, y: 0 }}
               exit={{ opacity: 0, scale: 0.85, y: -10 }}
@@ -71,6 +65,36 @@ export default function SwipeDeck() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* === BADGES — centrés en bas DU DECK (dans ta zone rouge) === */}
+        <div className="absolute left-1/2 -translate-x-1/2 bottom-6 z-[100] pointer-events-none">
+          <div className="flex items-center justify-center gap-8">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/vovo-yellow.png"
+              alt="Vovo (swipe gauche)"
+              width={120} height={120}
+              className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
+              onClick={() => commitSwipe("left")}
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/doro-vovo-red.png"
+              alt="Doro et Vovo (swipe haut)"
+              width={120} height={120}
+              className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
+              onClick={() => commitSwipe("up")}
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/doro-blue.png"
+              alt="Doro (swipe droite)"
+              width={120} height={120}
+              className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
+              onClick={() => commitSwipe("right")}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -79,12 +103,9 @@ export default function SwipeDeck() {
 function Card({
   p, isTop, isNext, onSwipe, photoIndex, setPhotoIndex,
 }: {
-  p: Profile;
-  isTop: boolean;
-  isNext: boolean;
+  p: Profile; isTop: boolean; isNext: boolean;
   onSwipe: (d: "left" | "right" | "up") => void;
-  photoIndex: number;
-  setPhotoIndex: (fn: any) => void;
+  photoIndex: number; setPhotoIndex: (fn: any) => void;
 }) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -104,41 +125,7 @@ function Card({
 
   const baseScale = isTop ? 1 : isNext ? 0.965 : 0.93;
   const baseY     = isTop ? 0 : isNext ? 10 : 22;
-{/* === BADGES — centrés en bas DANS la carte (zone rouge) === */}
-<div className="absolute left-1/2 -translate-x-1/2 bottom-6 z-50 pointer-events-none">
-  <div className="flex items-center justify-center gap-6">
-    {/* Gauche = Vovo */}
-    {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img
-      src="/vovo-yellow.png"
-      alt="Vovo (swipe gauche)"
-      width={110}   /* taille dans la carte : ~110–120px */
-      height={110}
-      className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
-      onClick={() => onSwipe("left")}
-    />
-    {/* Milieu = Doro et Vovo */}
-    {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img
-      src="/doro-vovo-red.png"
-      alt="Doro et Vovo (swipe haut)"
-      width={110}
-      height={110}
-      className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
-      onClick={() => onSwipe("up")}
-    />
-    {/* Droite = Doro */}
-    {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img
-      src="/doro-blue.png"
-      alt="Doro (swipe droite)"
-      width={110}
-      height={110}
-      className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
-      onClick={() => onSwipe("right")}
-    />
-  </div>
-</div>
+
   return (
     <motion.div
       className="absolute inset-0"
@@ -155,7 +142,6 @@ function Card({
         style={{ x, y, rotate, willChange: "transform" }}
         className="w-full h-full rounded-[48px] md:rounded-[56px] overflow-hidden bg-black relative ring-1 ring-black/5"
       >
-        {/* Image */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={p.photos[photoIndex % p.photos.length]}
@@ -165,11 +151,9 @@ function Card({
           onDoubleClick={() => setPhotoIndex((n: number) => n + 1)}
         />
 
-        {/* Gradients */}
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/70 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/50 to-transparent" />
 
-        {/* Infos */}
         <div className="absolute bottom-4 left-4 right-4 text-white drop-shadow">
           <h2 className="text-2xl font-semibold">{p.name}</h2>
           <p className="text-sm opacity-90">{p.bio}</p>
