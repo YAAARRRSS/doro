@@ -1,38 +1,30 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Doro ou Vovo",
-  description: "Prototype swipe dating app",
+  description: "Prototype swipe app",
 };
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "600", "800"],
-});
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body className={`${poppins.className} relative min-h-screen overflow-hidden`}>
-        {/* Fond clair neutre */}
-        <div className="fixed inset-0 -z-20 bg-gradient-to-br from-white via-slate-50 to-white" />
+      <body className="min-h-screen bg-white">
+        {/* Header simple */}
+        <header className="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-black/5">
+          <nav className="mx-auto max-w-3xl px-4 h-14 flex items-center justify-between">
+            <Link href="/" className="font-semibold tracking-wide">Doro ou Vovo</Link>
+            <div className="flex gap-4 text-sm">
+              <Link href="/" className="hover:underline">Accueil</Link>
+              <Link href="/profile" className="hover:underline">Profil</Link>
+            </div>
+          </nav>
+        </header>
 
-        {/* Logo en COULEURS, très grand, toujours derrière */}
-        <div
-          aria-hidden
-          className="fixed inset-0 -z-10 pointer-events-none flex items-center justify-center"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/doro-vovo-logo.png"
-            alt="Doro ou Vovo"
-            className="select-none w-[96vmin] max-w-[1200px] h-auto opacity-100"
-          />
-        </div>
-
-        {children}
+        <main className="mx-auto max-w-3xl px-4 py-6 flex items-center justify-center">
+          {children}
+        </main>
       </body>
     </html>
   );
