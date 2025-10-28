@@ -6,9 +6,33 @@ type Profile = { id: string; name: string; bio: string; photos: string[] };
 
 export default function SwipeDeck() {
   const initial: Profile[] = [
-    { id: "1", name: "Léa, 25", bio: "Escalade • Café • Voyages", photos: ["https://picsum.photos/id/1011/800/1200","https://picsum.photos/id/1012/800/1200"] },
-    { id: "2", name: "Adam, 28", bio: "Tech • Vélo • Cuisine", photos: ["https://picsum.photos/id/1015/800/1200","https://picsum.photos/id/1016/800/1200"] },
-    { id: "3", name: "Maya, 27", bio: "Piano • Randonnée • Chats", photos: ["https://picsum.photos/id/1024/800/1200","https://picsum.photos/id/1025/800/1200"] },
+    {
+      id: "1",
+      name: "Léa, 25",
+      bio: "Escalade • Café • Voyages",
+      photos: [
+        "https://picsum.photos/id/1011/800/1200",
+        "https://picsum.photos/id/1012/800/1200",
+      ],
+    },
+    {
+      id: "2",
+      name: "Adam, 28",
+      bio: "Tech • Vélo • Cuisine",
+      photos: [
+        "https://picsum.photos/id/1015/800/1200",
+        "https://picsum.photos/id/1016/800/1200",
+      ],
+    },
+    {
+      id: "3",
+      name: "Maya, 27",
+      bio: "Piano • Randonnée • Chats",
+      photos: [
+        "https://picsum.photos/id/1024/800/1200",
+        "https://picsum.photos/id/1025/800/1200",
+      ],
+    },
   ];
 
   const [stack, setStack] = useState<Profile[]>(initial);
@@ -26,81 +50,54 @@ export default function SwipeDeck() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 pb-32">
-      {/* zone du deck */}
-      <div className="relative w-full max-w-md">
-        <div className="aspect-[3/4] relative select-none z-10">
-          <AnimatePresence initial={false}>
-            {stack.map((p, i) => {
-              const isTop = i === stack.length - 1;
-              const isNext = i === stack.length - 2;
-              return (
-                <Card
-                  key={p.id}
-                  p={p}
-                  isTop={isTop}
-                  isNext={isNext}
-                  onSwipe={commitSwipe}
-                  photoIndex={isTop ? photoIndex : 0}
-                  setPhotoIndex={setPhotoIndex}
-                />
-              );
-            })}
-          </AnimatePresence>
+    <div className="relative w-full max-w-md">
+      {/* zone pile de cartes */}
+      <div className="aspect-[3/4] relative select-none z-10">
+        <AnimatePresence initial={false}>
+          {stack.map((p, i) => {
+            const isTop = i === stack.length - 1;
+            const isNext = i === stack.length - 2;
+            return (
+              <Card
+                key={p.id}
+                p={p}
+                isTop={isTop}
+                isNext={isNext}
+                onSwipe={commitSwipe}
+                photoIndex={isTop ? photoIndex : 0}
+                setPhotoIndex={setPhotoIndex}
+              />
+            );
+          })}
+        </AnimatePresence>
 
-          {/* Émoji géant au commit */}
-          <AnimatePresence>
-            {effectEmoji && (
-              <motion.div
-                key="swipe-emoji"
-                className="absolute inset-0 flex items-center justify-center pointer-events-none z-50"
-                initial={{ opacity: 0, scale: 0.85, y: 10 }}
-                animate={{ opacity: 1, scale: 1.25, y: 0 }}
-                exit={{ opacity: 0, scale: 0.85, y: -10 }}
-                transition={{ type: "spring", stiffness: 220, damping: 18 }}
-              >
-                <div className="text-[180px] md:text-[220px] drop-shadow-2xl">{effectEmoji}</div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        {/* émoji géant au moment du commit */}
+        <AnimatePresence>
+          {effectEmoji && (
+            <motion.div
+              key="swipe-emoji"
+              className="absolute inset-0 flex items-center justify-center pointer-events-none z-50"
+              initial={{ opacity: 0, scale: 0.85, y: 10 }}
+              animate={{ opacity: 1, scale: 1.25, y: 0 }}
+              exit={{ opacity: 0, scale: 0.85, y: -10 }}
+              transition={{ type: "spring", stiffness: 220, damping: 18 }}
+            >
+              <div className="text-[180px] md:text-[220px] drop-shadow-2xl">{effectEmoji}</div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-
-      {/* Badges alignés EN BAS DE L’IMAGE (dans le cadre, taille moyenne/petite) */}
-<div className="absolute inset-x-0 bottom-3 z-30 pointer-events-none">
-  <div className="mx-auto max-w-md px-6 flex items-center justify-between">
-    {/* Jaune = Vovo (gauche) */}
-    {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img
-      src="/vovo-yellow.png"
-      alt="Vovo (swipe gauche)"
-      className="h-12 md:h-14 w-auto pointer-events-auto cursor-pointer drop-shadow"
-      onClick={() => commitSwipe("left")}
-    />
-    {/* Rouge = Doro et Vovo (milieu) */}
-    {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img
-      src="/doro-vovo-red.png"
-      alt="Doro et Vovo (swipe haut)"
-      className="h-12 md:h-14 w-auto pointer-events-auto cursor-pointer drop-shadow"
-      onClick={() => commitSwipe("up")}
-    />
-    {/* Bleu = Doro (droite) */}
-    {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img
-      src="/doro-blue.png"
-      alt="Doro (swipe droite)"
-      className="h-12 md:h-14 w-auto pointer-events-auto cursor-pointer drop-shadow"
-      onClick={() => commitSwipe("right")}
-    />
-  </div>
-</div>
     </div>
   );
 }
 
 function Card({
-  p, isTop, isNext, onSwipe, photoIndex, setPhotoIndex,
+  p,
+  isTop,
+  isNext,
+  onSwipe,
+  photoIndex,
+  setPhotoIndex,
 }: {
   p: Profile;
   isTop: boolean;
@@ -113,7 +110,7 @@ function Card({
   const y = useMotionValue(0);
   const rotate = useTransform(x, [-240, 0, 240], [-18, 0, 18]);
 
-  // texte géant pendant le drag
+  // progression des textes lors du drag (faibles seuils = apparition facile)
   const leftProg  = useTransform(x, [-10, -140], [0, 1], { clamp: true });
   const rightProg = useTransform(x, [ 10,  140], [0, 1], { clamp: true });
   const upProg    = useTransform(y, [-10, -140], [0, 1], { clamp: true });
@@ -126,7 +123,7 @@ function Card({
     if (dy < -t) return onSwipe("up");
   };
 
-  // pile visible
+  // effet pile : la carte suivante est visible
   const baseScale = isTop ? 1 : isNext ? 0.965 : 0.93;
   const baseY = isTop ? 0 : isNext ? 10 : 22;
 
@@ -139,7 +136,6 @@ function Card({
       transition={{ type: "spring", stiffness: 300, damping: 28 }}
       style={{ zIndex: isTop ? 30 : isNext ? 20 : 10 }}
     >
-      {/* 👉👉 le conteneur CLIPPE vraiment l’image */}
       <motion.div
         drag={isTop}
         dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
@@ -147,17 +143,17 @@ function Card({
         style={{ x, y, rotate, willChange: "transform" }}
         className="w-full h-full rounded-[48px] md:rounded-[56px] overflow-hidden bg-black relative ring-1 ring-black/5"
       >
-        {/* l'image hérite des coins arrondis du parent (via rounded-inherit) */}
+        {/* photo — l’overflow-hidden du parent applique les coins arrondis à toutes les images */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={p.photos[photoIndex % p.photos.length]}
           alt={p.name}
-          className="w-full h-full object-cover rounded-inherit"
+          className="w-full h-full object-cover"
           draggable={false}
           onDoubleClick={() => setPhotoIndex((n: number) => n + 1)}
         />
 
-        {/* lisibilité */}
+        {/* gradients lisibilité */}
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/70 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/50 to-transparent" />
 
@@ -167,18 +163,57 @@ function Card({
           <p className="text-sm opacity-90">{p.bio}</p>
         </div>
 
-        {/* textes géants au drag */}
-        <motion.div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
-          style={{ opacity: leftProg, scale: useTransform(leftProg, [0, 1], [0.92, 1]) }}>
-          <span className="text-white text-6xl md:text-8xl font-extrabold drop-shadow-[0_2px_16px_rgba(0,0,0,0.6)]">VOVO</span>
+        {/* badges directionnels (petits/moyens), alignés en bas de la carte */}
+        <div className="absolute inset-x-0 bottom-3 z-40">
+          <div className="mx-4 flex items-end justify-between pointer-events-none">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/vovo-yellow.png"
+              alt="Vovo (swipe gauche)"
+              className="h-10 md:h-12 w-auto pointer-events-auto cursor-pointer drop-shadow"
+              onClick={() => onSwipe("left")}
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/doro-vovo-red.png"
+              alt="Doro et Vovo (swipe haut)"
+              className="h-10 md:h-12 w-auto pointer-events-auto cursor-pointer drop-shadow"
+              onClick={() => onSwipe("up")}
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/doro-blue.png"
+              alt="Doro (swipe droite)"
+              className="h-10 md:h-12 w-auto pointer-events-auto cursor-pointer drop-shadow"
+              onClick={() => onSwipe("right")}
+            />
+          </div>
+        </div>
+
+        {/* textes géants pendant le drag */}
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
+          style={{ opacity: leftProg, scale: useTransform(leftProg, [0, 1], [0.92, 1]) }}
+        >
+          <span className="text-white text-6xl md:text-8xl font-extrabold drop-shadow-[0_2px_16px_rgba(0,0,0,0.6)]">
+            VOVO
+          </span>
         </motion.div>
-        <motion.div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
-          style={{ opacity: rightProg, scale: useTransform(rightProg, [0, 1], [0.92, 1]) }}>
-          <span className="text-white text-6xl md:text-8xl font-extrabold drop-shadow-[0_2px_16px_rgba(0,0,0,0.6)]">DORO</span>
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
+          style={{ opacity: rightProg, scale: useTransform(rightProg, [0, 1], [0.92, 1]) }}
+        >
+          <span className="text-white text-6xl md:text-8xl font-extrabold drop-shadow-[0_2px_16px_rgba(0,0,0,0.6)]">
+            DORO
+          </span>
         </motion.div>
-        <motion.div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
-          style={{ opacity: upProg, scale: useTransform(upProg, [0, 1], [0.92, 1]) }}>
-          <span className="text-white text-5xl md:text-7xl font-extrabold text-center drop-shadow-[0_2px_16px_rgba(0,0,0,0.6)]">DORO ET VOVO</span>
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
+          style={{ opacity: upProg, scale: useTransform(upProg, [0, 1], [0.92, 1]) }}
+        >
+          <span className="text-white text-5xl md:text-7xl font-extrabold text-center drop-shadow-[0_2px_16px_rgba(0,0,0,0.6)]">
+            DORO ET VOVO
+          </span>
         </motion.div>
       </motion.div>
     </motion.div>
