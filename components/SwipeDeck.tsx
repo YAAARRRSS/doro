@@ -46,18 +46,17 @@ export default function SwipeDeck() {
 
   const commitSwipe = (dir: "left" | "right" | "up") => {
     const emoji: Record<typeof dir, string> = {
-      left: "🍺",   // Vovo
-      right: "🙈",  // Doro
-      up: "⚖️",     // Doro et Vovo
+      left: "🍺",     // Vovo
+      right: "🙈",    // Doro
+      up: "⚖️",       // Doro et Vovo
     } as const;
 
     setEffectEmoji(emoji[dir]);
-
     setTimeout(() => {
       setStack((s) => s.slice(0, -1));
       setPhotoIndex(0);
       setEffectEmoji(null);
-    }, 650);
+    }, 700);
   };
 
   return (
@@ -81,26 +80,25 @@ export default function SwipeDeck() {
           })}
         </AnimatePresence>
 
-        {/* Boutons d’action (pour clic) */}
+        {/* Boutons clic */}
         <div className="absolute -bottom-16 left-0 right-0 flex items-center justify-center gap-4">
           <Btn onClick={() => commitSwipe("left")}>Vovo</Btn>
           <Btn onClick={() => commitSwipe("up")}>Doro et Vovo</Btn>
           <Btn onClick={() => commitSwipe("right")}>Doro</Btn>
         </div>
 
-        {/* Emoji au moment du swipe validé */}
+        {/* Emoji au moment du swipe validé (plus gros + z-index élevé) */}
         <AnimatePresence>
           {effectEmoji && (
             <motion.div
               key="swipe-emoji"
-              className="absolute inset-0 flex items-center justify-center pointer-events-none"
-              initial={{ opacity: 0, scale: 0.7, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
+              className="absolute inset-0 flex items-center justify-center pointer-events-none z-50"
+              initial={{ opacity: 0, scale: 0.75, y: 10 }}
+              animate={{ opacity: 1, scale: 1.1, y: 0 }}
               exit={{ opacity: 0, scale: 0.7, y: -10 }}
               transition={{ type: "spring", stiffness: 220, damping: 18 }}
-              style={{ zIndex: 50 }}
             >
-              <div className="text-[90px] md:text-[120px] drop-shadow-2xl">
+              <div className="text-[140px] md:text-[180px] drop-shadow-2xl">
                 {effectEmoji}
               </div>
             </motion.div>
@@ -130,10 +128,10 @@ function Card({
   const y = useMotionValue(0);
   const rotate = useTransform(x, [-220, 0, 220], [-18, 0, 18]);
 
-  // Progressions d’opacité/échelle pour les textes géants
-  const leftProg = useTransform(x, [-40, -180], [0, 1], { clamp: true });
-  const rightProg = useTransform(x, [40, 180], [0, 1], { clamp: true });
-  const upProg = useTransform(y, [-40, -180], [0, 1], { clamp: true });
+  // Progressions d’opacité/échelle pour les textes géants (seuils plus faciles)
+  const leftProg  = useTransform(x, [-20, -140], [0, 1], { clamp: true });
+  const rightProg = useTransform(x, [ 20,  140], [0, 1], { clamp: true });
+  const upProg    = useTransform(y, [-20, -140], [0, 1], { clamp: true });
 
   const handleDragEnd = (_: any, info: { offset: { x: number; y: number } }) => {
     const { x: dx, y: dy } = info.offset;
@@ -143,7 +141,7 @@ function Card({
     if (dy < -t) return onSwipe("up");
   };
 
-  // Pile visible : légère échelle et décalage pour la carte suivante
+  // Pile visible
   const baseScale = isTop ? 1 : isNext ? 0.965 : 0.93;
   const baseY = isTop ? 0 : isNext ? 10 : 22;
 
@@ -183,42 +181,42 @@ function Card({
           <p className="text-xs opacity-70 mt-1">Double-tap la photo pour changer</p>
         </div>
 
-        {/* === TEXTE GÉANT animé pendant le drag === */}
+        {/* === TEXTE GÉANT pendant le drag (couleur blanche + ombre, super lisible) === */}
         {/* Vovo (gauche) */}
         <motion.div
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
           style={{
             opacity: leftProg,
-            scale: useTransform(leftProg, [0, 1], [0.85, 1]),
+            scale: useTransform(leftProg, [0, 1], [0.9, 1]),
           }}
         >
-          <span className="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-rose-400 to-orange-300 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
+          <span className="text-white text-5xl md:text-7xl font-extrabold drop-shadow-[0_2px_14px_rgba(0,0,0,0.55)]">
             VOVO
           </span>
         </motion.div>
 
         {/* Doro (droite) */}
         <motion.div
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
           style={{
             opacity: rightProg,
-            scale: useTransform(rightProg, [0, 1], [0.85, 1]),
+            scale: useTransform(rightProg, [0, 1], [0.9, 1]),
           }}
         >
-          <span className="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-sky-400 to-indigo-300 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
+          <span className="text-white text-5xl md:text-7xl font-extrabold drop-shadow-[0_2px_14px_rgba(0,0,0,0.55)]">
             DORO
           </span>
         </motion.div>
 
         {/* Doro et Vovo (haut) */}
         <motion.div
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
           style={{
             opacity: upProg,
-            scale: useTransform(upProg, [0, 1], [0.85, 1]),
+            scale: useTransform(upProg, [0, 1], [0.9, 1]),
           }}
         >
-          <span className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-amber-400 to-lime-300 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] text-center">
+          <span className="text-white text-4xl md:text-6xl font-extrabold text-center drop-shadow-[0_2px_14px_rgba(0,0,0,0.55)]">
             DORO ET VOVO
           </span>
         </motion.div>
