@@ -1,6 +1,12 @@
 "use client";
+
 import { useState } from "react";
-import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
 
 type Profile = { id: string; name: string; bio: string; photos: string[] };
 
@@ -40,7 +46,12 @@ export default function SwipeDeck() {
   const [effectEmoji, setEffectEmoji] = useState<string | null>(null);
 
   const commitSwipe = (dir: "left" | "right" | "up") => {
-    const emoji: Record<typeof dir, string> = { left: "🍺", right: "🙈", up: "⚖️" } as const;
+    const emoji: Record<typeof dir, string> = {
+      left: "🍺", // Vovo
+      right: "🙈", // Doro
+      up: "⚖️", // Doro et Vovo
+    } as const;
+
     setEffectEmoji(emoji[dir]);
     setTimeout(() => {
       setStack((s) => s.slice(0, -1));
@@ -51,7 +62,7 @@ export default function SwipeDeck() {
 
   return (
     <div className="relative w-full max-w-md">
-      {/* zone pile de cartes */}
+      {/* Zone pile de cartes */}
       <div className="aspect-[3/4] relative select-none z-10">
         <AnimatePresence initial={false}>
           {stack.map((p, i) => {
@@ -71,7 +82,7 @@ export default function SwipeDeck() {
           })}
         </AnimatePresence>
 
-        {/* émoji géant au moment du commit */}
+        {/* Emoji géant au commit */}
         <AnimatePresence>
           {effectEmoji && (
             <motion.div
@@ -82,7 +93,9 @@ export default function SwipeDeck() {
               exit={{ opacity: 0, scale: 0.85, y: -10 }}
               transition={{ type: "spring", stiffness: 220, damping: 18 }}
             >
-              <div className="text-[180px] md:text-[220px] drop-shadow-2xl">{effectEmoji}</div>
+              <div className="text-[180px] md:text-[220px] drop-shadow-2xl">
+                {effectEmoji}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -110,10 +123,10 @@ function Card({
   const y = useMotionValue(0);
   const rotate = useTransform(x, [-240, 0, 240], [-18, 0, 18]);
 
-  // progression des textes lors du drag (faibles seuils = apparition facile)
-  const leftProg  = useTransform(x, [-10, -140], [0, 1], { clamp: true });
-  const rightProg = useTransform(x, [ 10,  140], [0, 1], { clamp: true });
-  const upProg    = useTransform(y, [-10, -140], [0, 1], { clamp: true });
+  // Labels géants pendant le drag
+  const leftProg = useTransform(x, [-10, -140], [0, 1], { clamp: true });
+  const rightProg = useTransform(x, [10, 140], [0, 1], { clamp: true });
+  const upProg = useTransform(y, [-10, -140], [0, 1], { clamp: true });
 
   const handleDragEnd = (_: any, info: { offset: { x: number; y: number } }) => {
     const { x: dx, y: dy } = info.offset;
@@ -123,7 +136,7 @@ function Card({
     if (dy < -t) return onSwipe("up");
   };
 
-  // effet pile : la carte suivante est visible
+  // Effet pile : carte suivante visible
   const baseScale = isTop ? 1 : isNext ? 0.965 : 0.93;
   const baseY = isTop ? 0 : isNext ? 10 : 22;
 
@@ -136,44 +149,7 @@ function Card({
       transition={{ type: "spring", stiffness: 300, damping: 28 }}
       style={{ zIndex: isTop ? 30 : isNext ? 20 : 10 }}
     >
-    {/* === Badges directionnels — petits/moyens, collés en bas === */}
-<div className="absolute inset-x-0 bottom-3 z-50">
-  <div className="mx-4 flex items-end justify-between pointer-events-none">
-    {/* Gauche = Vovo (jaune) */}
-    {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img
-      src="/vovo-yellow.png"
-      alt="Vovo (swipe gauche)"
-      width={56}  // taille medium; mets 48 si tu veux plus petit
-      height={56}
-      className="pointer-events-auto cursor-pointer drop-shadow"
-      onClick={() => onSwipe("left")}
-    />
-
-    {/* Milieu = Doro et Vovo (rouge) */}
-    {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img
-      src="/doro-vovo-red.png"
-      alt="Doro et Vovo (swipe haut)"
-      width={56}
-      height={56}
-      className="pointer-events-auto cursor-pointer drop-shadow"
-      onClick={() => onSwipe("up")}
-    />
-
-    {/* Droite = Doro (bleu) */}
-    {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img
-      src="/doro-blue.png"
-      alt="Doro (swipe droite)"
-      width={56}
-      height={56}
-      className="pointer-events-auto cursor-pointer drop-shadow"
-      onClick={() => onSwipe("right")}
-    />
-  </div>
-</div>
-
+      {/* ----------- CONTENEUR DE LA CARTE ----------- */}
       <motion.div
         drag={isTop}
         dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
@@ -181,7 +157,7 @@ function Card({
         style={{ x, y, rotate, willChange: "transform" }}
         className="w-full h-full rounded-[48px] md:rounded-[56px] overflow-hidden bg-black relative ring-1 ring-black/5"
       >
-        {/* photo — l’overflow-hidden du parent applique les coins arrondis à toutes les images */}
+        {/* Photo */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={p.photos[photoIndex % p.photos.length]}
@@ -191,55 +167,48 @@ function Card({
           onDoubleClick={() => setPhotoIndex((n: number) => n + 1)}
         />
 
-        {/* gradients lisibilité */}
+        {/* Gradients lisibilité */}
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/70 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/50 to-transparent" />
 
-        {/* infos */}
+        {/* Infos */}
         <div className="absolute bottom-4 left-4 right-4 text-white drop-shadow">
           <h2 className="text-2xl font-semibold">{p.name}</h2>
           <p className="text-sm opacity-90">{p.bio}</p>
         </div>
 
-        {/* === Badges directionnels — petits/moyens, collés en bas === */}
-<div className="absolute inset-x-0 bottom-3 z-50">
-  <div className="mx-4 flex items-end justify-between pointer-events-none">
-    {/* Gauche = Vovo (jaune) */}
-    {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img
-      src="/vovo-yellow.png"
-      alt="Vovo (swipe gauche)"
-      width={56}
-      height={56}
-      className="pointer-events-auto cursor-pointer drop-shadow"
-      onClick={() => onSwipe("left")}
-    />
+        {/* === BADGES — medium/large, centrés en bas (Tinder-like) === */}
+        <div className="absolute bottom-6 left-0 right-0 z-50 flex justify-center gap-6">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/vovo-yellow.png"
+            alt="Vovo (swipe gauche)"
+            width={80}
+            height={80}
+            className="pointer-events-auto cursor-pointer drop-shadow-lg hover:scale-105 transition-transform"
+            onClick={() => onSwipe("left")}
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/doro-vovo-red.png"
+            alt="Doro et Vovo (swipe haut)"
+            width={80}
+            height={80}
+            className="pointer-events-auto cursor-pointer drop-shadow-lg hover:scale-105 transition-transform"
+            onClick={() => onSwipe("up")}
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/doro-blue.png"
+            alt="Doro (swipe droite)"
+            width={80}
+            height={80}
+            className="pointer-events-auto cursor-pointer drop-shadow-lg hover:scale-105 transition-transform"
+            onClick={() => onSwipe("right")}
+          />
+        </div>
 
-    {/* Milieu = Doro et Vovo (rouge) */}
-    {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img
-      src="/doro-vovo-red.png"
-      alt="Doro et Vovo (swipe haut)"
-      width={56}
-      height={56}
-      className="pointer-events-auto cursor-pointer drop-shadow"
-      onClick={() => onSwipe("up")}
-    />
-
-    {/* Droite = Doro (bleu) */}
-    {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img
-      src="/doro-blue.png"
-      alt="Doro (swipe droite)"
-      width={56}
-      height={56}
-      className="pointer-events-auto cursor-pointer drop-shadow"
-      onClick={() => onSwipe("right")}
-    />
-  </div>
-</div>
-
-        {/* textes géants pendant le drag */}
+        {/* Labels géants pendant le drag */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
           style={{ opacity: leftProg, scale: useTransform(leftProg, [0, 1], [0.92, 1]) }}
@@ -248,6 +217,7 @@ function Card({
             VOVO
           </span>
         </motion.div>
+
         <motion.div
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
           style={{ opacity: rightProg, scale: useTransform(rightProg, [0, 1], [0.92, 1]) }}
@@ -256,6 +226,7 @@ function Card({
             DORO
           </span>
         </motion.div>
+
         <motion.div
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
           style={{ opacity: upProg, scale: useTransform(upProg, [0, 1], [0.92, 1]) }}
@@ -265,6 +236,7 @@ function Card({
           </span>
         </motion.div>
       </motion.div>
+      {/* ----------- FIN CONTENEUR DE LA CARTE ----------- */}
     </motion.div>
   );
 }
