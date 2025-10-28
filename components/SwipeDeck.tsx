@@ -136,6 +136,56 @@ function Card({
       transition={{ type: "spring", stiffness: 300, damping: 28 }}
       style={{ zIndex: isTop ? 30 : isNext ? 20 : 10 }}
     >
+    {/* Badges directionnels (Vovo / Doro et Vovo / Doro) */}
+<div className="absolute inset-x-0 bottom-4 z-50 flex justify-between px-8">
+  <button
+    type="button"
+    onClick={() => onSwipe("left")}
+    className="transition-transform duration-200 hover:scale-105 active:scale-95"
+    aria-label="Vovo"
+  >
+    <Image
+      src="/vovo-yellow.png"
+      alt="Vovo"
+      width={60}
+      height={60}
+      priority
+      className="rounded-full drop-shadow-md"
+    />
+  </button>
+
+  <button
+    type="button"
+    onClick={() => onSwipe("up")}
+    className="transition-transform duration-200 hover:scale-105 active:scale-95"
+    aria-label="Doro et Vovo"
+  >
+    <Image
+      src="/doro-vovo-red.png"
+      alt="Doro et Vovo"
+      width={60}
+      height={60}
+      priority
+      className="rounded-full drop-shadow-md"
+    />
+  </button>
+
+  <button
+    type="button"
+    onClick={() => onSwipe("right")}
+    className="transition-transform duration-200 hover:scale-105 active:scale-95"
+    aria-label="Doro"
+  >
+    <Image
+      src="/doro-blue.png"
+      alt="Doro"
+      width={60}
+      height={60}
+      priority
+      className="rounded-full drop-shadow-md"
+    />
+  </button>
+</div>
       <motion.div
         drag={isTop}
         dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
