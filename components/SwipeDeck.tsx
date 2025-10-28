@@ -43,23 +43,20 @@ export default function SwipeDeck() {
   const [stack, setStack] = useState<Profile[]>(initial);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [effectEmoji, setEffectEmoji] = useState<string | null>(null);
-  const [dragging, setDragging] = useState(false);
 
   const commitSwipe = (dir: "left" | "right" | "up") => {
     const emoji: Record<typeof dir, string> = {
-      left: "🍺",     // Vovo
-      right: "🙈",    // Doro
-      up: "⚖️",       // Doro et Vovo
+      left: "🍺",   // Vovo
+      right: "🙈",  // Doro
+      up: "⚖️",     // Doro et Vovo
     } as const;
 
     setEffectEmoji(emoji[dir]);
 
-    // Retire la carte après l’anim
     setTimeout(() => {
       setStack((s) => s.slice(0, -1));
       setPhotoIndex(0);
       setEffectEmoji(null);
-      setDragging(false);
     }, 650);
   };
 
@@ -79,13 +76,12 @@ export default function SwipeDeck() {
                 onSwipe={commitSwipe}
                 photoIndex={isTop ? photoIndex : 0}
                 setPhotoIndex={setPhotoIndex}
-                setDragging={setDragging}
               />
             );
           })}
         </AnimatePresence>
 
-        {/* Boutons d’action */}
+        {/* Boutons d’action (pour clic) */}
         <div className="absolute -bottom-16 left-0 right-0 flex items-center justify-center gap-4">
           <Btn onClick={() => commitSwipe("left")}>Vovo</Btn>
           <Btn onClick={() => commitSwipe("up")}>Doro et Vovo</Btn>
@@ -122,7 +118,6 @@ function Card({
   onSwipe,
   photoIndex,
   setPhotoIndex,
-  setDragging,
 }: {
   p: Profile;
   isTop: boolean;
@@ -130,36 +125,25 @@ function Card({
   onSwipe: (d: "left" | "right" | "up") => void;
   photoIndex: number;
   setPhotoIndex: (fn: any) => void;
-  setDragging: (b: boolean) => void;
 }) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const rotate = useTransform(x, [-220, 0, 220], [-18, 0, 18]);
 
-  // Progressions pour le texte géant (0 → 1)
+  // Progressions d’opacité/échelle pour les textes géants
   const leftProg = useTransform(x, [-40, -180], [0, 1], { clamp: true });
   const rightProg = useTransform(x, [40, 180], [0, 1], { clamp: true });
   const upProg = useTransform(y, [-40, -180], [0, 1], { clamp: true });
 
-  // Choisit dynamiquement quel texte afficher selon le plus fort signal
-  const label = ((): "VOVO" | "DORO" | "DORO ET VOVO" | "" => {
-    // ces valeurs seront évaluées par framer au runtime
-    // on ne peut pas lire directement leftProg.get() dans render, donc on affiche les 3 en superposition avec leur propre opacité
-    return "";
-  })();
-
   const handleDragEnd = (_: any, info: { offset: { x: number; y: number } }) => {
     const { x: dx, y: dy } = info.offset;
     const t = 120;
-
     if (dx > t) return onSwipe("right");
     if (dx < -t) return onSwipe("left");
     if (dy < -t) return onSwipe("up");
-
-    setDragging(false);
   };
 
-  // Pile : la carte “next” reste visible
+  // Pile visible : légère échelle et décalage pour la carte suivante
   const baseScale = isTop ? 1 : isNext ? 0.965 : 0.93;
   const baseY = isTop ? 0 : isNext ? 10 : 22;
 
@@ -175,7 +159,6 @@ function Card({
       <motion.div
         drag={isTop}
         dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-        onDragStart={() => isTop && setDragging(true)}
         onDragEnd={handleDragEnd}
         style={{ x, y, rotate, willChange: "transform" }}
         className="w-full h-full rounded-3xl shadow-2xl overflow-hidden bg-black relative"
@@ -200,13 +183,16 @@ function Card({
           <p className="text-xs opacity-70 mt-1">Double-tap la photo pour changer</p>
         </div>
 
-        {/* === TEXTE GÉANT qui suit le mouvement === */}
+        {/* === TEXTE GÉANT animé pendant le drag === */}
         {/* Vovo (gauche) */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          style={{ opacity: leftProg, scale: useTransform(leftProg, [0, 1], [0.8, 1]) }}
+          style={{
+            opacity: leftProg,
+            scale: useTransform(leftProg, [0, 1], [0.85, 1]),
+          }}
         >
-          <span className="text-white text-5xl md:text-7xl font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+          <span className="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-rose-400 to-orange-300 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
             VOVO
           </span>
         </motion.div>
@@ -214,9 +200,12 @@ function Card({
         {/* Doro (droite) */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          style={{ opacity: rightProg, scale: useTransform(rightProg, [0, 1], [0.8, 1]) }}
+          style={{
+            opacity: rightProg,
+            scale: useTransform(rightProg, [0, 1], [0.85, 1]),
+          }}
         >
-          <span className="text-white text-5xl md:text-7xl font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+          <span className="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-sky-400 to-indigo-300 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
             DORO
           </span>
         </motion.div>
@@ -224,14 +213,15 @@ function Card({
         {/* Doro et Vovo (haut) */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          style={{ opacity: upProg, scale: useTransform(upProg, [0, 1], [0.8, 1]) }}
+          style={{
+            opacity: upProg,
+            scale: useTransform(upProg, [0, 1], [0.85, 1]),
+          }}
         >
-          <span className="text-white text-4xl md:text-6xl font-extrabold text-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+          <span className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-amber-400 to-lime-300 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] text-center">
             DORO ET VOVO
           </span>
         </motion.div>
-
-        {/* (On a retiré les petits labels d’angle pour un rendu plus propre) */}
       </motion.div>
     </motion.div>
   );
