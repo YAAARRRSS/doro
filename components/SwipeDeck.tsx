@@ -104,7 +104,41 @@ function Card({
 
   const baseScale = isTop ? 1 : isNext ? 0.965 : 0.93;
   const baseY     = isTop ? 0 : isNext ? 10 : 22;
-
+{/* === BADGES — centrés en bas DANS la carte (zone rouge) === */}
+<div className="absolute left-1/2 -translate-x-1/2 bottom-6 z-50 pointer-events-none">
+  <div className="flex items-center justify-center gap-6">
+    {/* Gauche = Vovo */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
+      src="/vovo-yellow.png"
+      alt="Vovo (swipe gauche)"
+      width={110}   /* taille dans la carte : ~110–120px */
+      height={110}
+      className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
+      onClick={() => onSwipe("left")}
+    />
+    {/* Milieu = Doro et Vovo */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
+      src="/doro-vovo-red.png"
+      alt="Doro et Vovo (swipe haut)"
+      width={110}
+      height={110}
+      className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
+      onClick={() => onSwipe("up")}
+    />
+    {/* Droite = Doro */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
+      src="/doro-blue.png"
+      alt="Doro (swipe droite)"
+      width={110}
+      height={110}
+      className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
+      onClick={() => onSwipe("right")}
+    />
+  </div>
+</div>
   return (
     <motion.div
       className="absolute inset-0"
