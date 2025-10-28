@@ -136,56 +136,44 @@ function Card({
       transition={{ type: "spring", stiffness: 300, damping: 28 }}
       style={{ zIndex: isTop ? 30 : isNext ? 20 : 10 }}
     >
-    {/* Badges directionnels (Vovo / Doro et Vovo / Doro) */}
-<div className="absolute inset-x-0 bottom-4 z-50 flex justify-between px-8">
-  <button
-    type="button"
-    onClick={() => onSwipe("left")}
-    className="transition-transform duration-200 hover:scale-105 active:scale-95"
-    aria-label="Vovo"
-  >
-    <Image
+    {/* === Badges directionnels — petits/moyens, collés en bas === */}
+<div className="absolute inset-x-0 bottom-3 z-50">
+  <div className="mx-4 flex items-end justify-between pointer-events-none">
+    {/* Gauche = Vovo (jaune) */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
       src="/vovo-yellow.png"
-      alt="Vovo"
-      width={60}
-      height={60}
-      priority
-      className="rounded-full drop-shadow-md"
+      alt="Vovo (swipe gauche)"
+      width={56}  // taille medium; mets 48 si tu veux plus petit
+      height={56}
+      className="pointer-events-auto cursor-pointer drop-shadow"
+      onClick={() => onSwipe("left")}
     />
-  </button>
 
-  <button
-    type="button"
-    onClick={() => onSwipe("up")}
-    className="transition-transform duration-200 hover:scale-105 active:scale-95"
-    aria-label="Doro et Vovo"
-  >
-    <Image
+    {/* Milieu = Doro et Vovo (rouge) */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
       src="/doro-vovo-red.png"
-      alt="Doro et Vovo"
-      width={60}
-      height={60}
-      priority
-      className="rounded-full drop-shadow-md"
+      alt="Doro et Vovo (swipe haut)"
+      width={56}
+      height={56}
+      className="pointer-events-auto cursor-pointer drop-shadow"
+      onClick={() => onSwipe("up")}
     />
-  </button>
 
-  <button
-    type="button"
-    onClick={() => onSwipe("right")}
-    className="transition-transform duration-200 hover:scale-105 active:scale-95"
-    aria-label="Doro"
-  >
-    <Image
+    {/* Droite = Doro (bleu) */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
       src="/doro-blue.png"
-      alt="Doro"
-      width={60}
-      height={60}
-      priority
-      className="rounded-full drop-shadow-md"
+      alt="Doro (swipe droite)"
+      width={56}
+      height={56}
+      className="pointer-events-auto cursor-pointer drop-shadow"
+      onClick={() => onSwipe("right")}
     />
-  </button>
+  </div>
 </div>
+
       <motion.div
         drag={isTop}
         dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
@@ -213,32 +201,43 @@ function Card({
           <p className="text-sm opacity-90">{p.bio}</p>
         </div>
 
-        {/* badges directionnels (petits/moyens), alignés en bas de la carte */}
-        <div className="absolute inset-x-0 bottom-3 z-40">
-          <div className="mx-4 flex items-end justify-between pointer-events-none">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/vovo-yellow.png"
-              alt="Vovo (swipe gauche)"
-              className="h-10 md:h-12 w-auto pointer-events-auto cursor-pointer drop-shadow"
-              onClick={() => onSwipe("left")}
-            />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/doro-vovo-red.png"
-              alt="Doro et Vovo (swipe haut)"
-              className="h-10 md:h-12 w-auto pointer-events-auto cursor-pointer drop-shadow"
-              onClick={() => onSwipe("up")}
-            />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/doro-blue.png"
-              alt="Doro (swipe droite)"
-              className="h-10 md:h-12 w-auto pointer-events-auto cursor-pointer drop-shadow"
-              onClick={() => onSwipe("right")}
-            />
-          </div>
-        </div>
+        {/* === Badges directionnels — petits/moyens, collés en bas === */}
+<div className="absolute inset-x-0 bottom-3 z-50">
+  <div className="mx-4 flex items-end justify-between pointer-events-none">
+    {/* Gauche = Vovo (jaune) */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
+      src="/vovo-yellow.png"
+      alt="Vovo (swipe gauche)"
+      width={56}
+      height={56}
+      className="pointer-events-auto cursor-pointer drop-shadow"
+      onClick={() => onSwipe("left")}
+    />
+
+    {/* Milieu = Doro et Vovo (rouge) */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
+      src="/doro-vovo-red.png"
+      alt="Doro et Vovo (swipe haut)"
+      width={56}
+      height={56}
+      className="pointer-events-auto cursor-pointer drop-shadow"
+      onClick={() => onSwipe("up")}
+    />
+
+    {/* Droite = Doro (bleu) */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
+      src="/doro-blue.png"
+      alt="Doro (swipe droite)"
+      width={56}
+      height={56}
+      className="pointer-events-auto cursor-pointer drop-shadow"
+      onClick={() => onSwipe("right")}
+    />
+  </div>
+</div>
 
         {/* textes géants pendant le drag */}
         <motion.div
