@@ -60,7 +60,8 @@ export default function SwipeDeck() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4">
+      {/* Zone du deck */}
       <div className="w-full max-w-md aspect-[3/4] relative select-none z-10">
         <AnimatePresence initial={false}>
           {stack.map((p, i) => {
@@ -80,22 +81,15 @@ export default function SwipeDeck() {
           })}
         </AnimatePresence>
 
-        {/* Boutons (clic) */}
-        <div className="absolute -bottom-16 left-0 right-0 flex items-center justify-center gap-4">
-          <Btn onClick={() => commitSwipe("left")}>Vovo</Btn>
-          <Btn onClick={() => commitSwipe("up")}>Doro et Vovo</Btn>
-          <Btn onClick={() => commitSwipe("right")}>Doro</Btn>
-        </div>
-
-        {/* Emoji au moment du swipe validé — très gros */}
+        {/* Emoji très gros au moment du swipe validé */}
         <AnimatePresence>
           {effectEmoji && (
             <motion.div
               key="swipe-emoji"
               className="absolute inset-0 flex items-center justify-center pointer-events-none z-50"
-              initial={{ opacity: 0, scale: 0.8, y: 10 }}
-              animate={{ opacity: 1, scale: 1.2, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: -10 }}
+              initial={{ opacity: 0, scale: 0.85, y: 10 }}
+              animate={{ opacity: 1, scale: 1.25, y: 0 }}
+              exit={{ opacity: 0, scale: 0.85, y: -10 }}
               transition={{ type: "spring", stiffness: 220, damping: 18 }}
             >
               <div className="text-[180px] md:text-[220px] drop-shadow-2xl">
@@ -104,6 +98,41 @@ export default function SwipeDeck() {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* Footer logos directionnels (cliquables) */}
+      <div className="w-full max-w-lg mt-10 px-6">
+        <div className="flex items-center justify-between">
+          {/* Gauche = Vovo */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/vovo-yellow.png"
+            alt="Vovo (swipe gauche)"
+            title="Vovo (swipe gauche)"
+            className="h-20 md:h-24 w-auto cursor-pointer drop-shadow"
+            onClick={() => commitSwipe("left")}
+          />
+
+          {/* Centre = Doro et Vovo */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/doro-vovo-red.png"
+            alt="Doro et Vovo (swipe haut)"
+            title="Doro et Vovo (swipe haut)"
+            className="h-20 md:h-24 w-auto cursor-pointer drop-shadow"
+            onClick={() => commitSwipe("up")}
+          />
+
+          {/* Droite = Doro */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/doro-blue.png"
+            alt="Doro (swipe droite)"
+            title="Doro (swipe droite)"
+            className="h-20 md:h-24 w-auto cursor-pointer drop-shadow"
+            onClick={() => commitSwipe("right")}
+          />
+        </div>
       </div>
     </div>
   );
@@ -128,7 +157,7 @@ function Card({
   const y = useMotionValue(0);
   const rotate = useTransform(x, [-240, 0, 240], [-18, 0, 18]);
 
-  // Progressions pour les textes géants (déclenchent tôt)
+  // Labels géants pendant le drag
   const leftProg  = useTransform(x, [-10, -140], [0, 1], { clamp: true });
   const rightProg = useTransform(x, [ 10,  140], [0, 1], { clamp: true });
   const upProg    = useTransform(y, [-10, -140], [0, 1], { clamp: true });
@@ -159,8 +188,9 @@ function Card({
         dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
         onDragEnd={handleDragEnd}
         style={{ x, y, rotate, willChange: "transform" }}
-        className="w-full h-full rounded-3xl shadow-2xl overflow-hidden bg-black relative"
+        className="w-full h-full rounded-[28px] shadow-2xl overflow-hidden bg-black relative"
       >
+        {/* Photo */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={p.photos[photoIndex % p.photos.length]}
@@ -170,7 +200,7 @@ function Card({
           onDoubleClick={() => setPhotoIndex((n: number) => n + 1)}
         />
 
-        {/* Gradients pour la lisibilité */}
+        {/* Gradients pour lisibilité */}
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/70 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/50 to-transparent" />
 
@@ -185,10 +215,7 @@ function Card({
         {/* Vovo (gauche) */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
-          style={{
-            opacity: leftProg,
-            scale: useTransform(leftProg, [0, 1], [0.92, 1]),
-          }}
+          style={{ opacity: leftProg, scale: useTransform(leftProg, [0, 1], [0.92, 1]) }}
         >
           <span className="text-white text-6xl md:text-8xl font-extrabold drop-shadow-[0_2px_16px_rgba(0,0,0,0.6)]">
             VOVO
@@ -198,10 +225,7 @@ function Card({
         {/* Doro (droite) */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
-          style={{
-            opacity: rightProg,
-            scale: useTransform(rightProg, [0, 1], [0.92, 1]),
-          }}
+          style={{ opacity: rightProg, scale: useTransform(rightProg, [0, 1], [0.92, 1]) }}
         >
           <span className="text-white text-6xl md:text-8xl font-extrabold drop-shadow-[0_2px_16px_rgba(0,0,0,0.6)]">
             DORO
@@ -211,10 +235,7 @@ function Card({
         {/* Doro et Vovo (haut) */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
-          style={{
-            opacity: upProg,
-            scale: useTransform(upProg, [0, 1], [0.92, 1]),
-          }}
+          style={{ opacity: upProg, scale: useTransform(upProg, [0, 1], [0.92, 1]) }}
         >
           <span className="text-white text-5xl md:text-7xl font-extrabold text-center drop-shadow-[0_2px_16px_rgba(0,0,0,0.6)]">
             DORO ET VOVO
