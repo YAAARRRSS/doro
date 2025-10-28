@@ -66,32 +66,35 @@ export default function SwipeDeck() {
         </div>
       </div>
 
-      {/* FOOTER FIXE avec logos (visible même si la carte bouge) */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
-        <div className="flex items-center justify-center gap-8">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/vovo-yellow.png"
-            alt="Vovo (swipe gauche)"
-            className="h-20 md:h-24 w-auto cursor-pointer drop-shadow"
-            onClick={() => commitSwipe("left")}
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/doro-vovo-red.png"
-            alt="Doro et Vovo (swipe haut)"
-            className="h-20 md:h-24 w-auto cursor-pointer drop-shadow"
-            onClick={() => commitSwipe("up")}
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/doro-blue.png"
-            alt="Doro (swipe droite)"
-            className="h-20 md:h-24 w-auto cursor-pointer drop-shadow"
-            onClick={() => commitSwipe("right")}
-          />
-        </div>
-      </div>
+      {/* Badges alignés EN BAS DE L’IMAGE (dans le cadre, taille moyenne/petite) */}
+<div className="absolute inset-x-0 bottom-3 z-30 pointer-events-none">
+  <div className="mx-auto max-w-md px-6 flex items-center justify-between">
+    {/* Jaune = Vovo (gauche) */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
+      src="/vovo-yellow.png"
+      alt="Vovo (swipe gauche)"
+      className="h-12 md:h-14 w-auto pointer-events-auto cursor-pointer drop-shadow"
+      onClick={() => commitSwipe("left")}
+    />
+    {/* Rouge = Doro et Vovo (milieu) */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
+      src="/doro-vovo-red.png"
+      alt="Doro et Vovo (swipe haut)"
+      className="h-12 md:h-14 w-auto pointer-events-auto cursor-pointer drop-shadow"
+      onClick={() => commitSwipe("up")}
+    />
+    {/* Bleu = Doro (droite) */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
+      src="/doro-blue.png"
+      alt="Doro (swipe droite)"
+      className="h-12 md:h-14 w-auto pointer-events-auto cursor-pointer drop-shadow"
+      onClick={() => commitSwipe("right")}
+    />
+  </div>
+</div>
     </div>
   );
 }
