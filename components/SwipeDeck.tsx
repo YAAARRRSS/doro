@@ -66,37 +66,35 @@ export default function SwipeDeck() {
           )}
         </AnimatePresence>
 
-        {/* === BADGES — centrés en bas DU DECK (dans ta zone rouge) === */}
-        <div className="absolute left-1/2 -translate-x-1/2 bottom-6 z-[100] pointer-events-none">
-          <div className="flex items-center justify-center gap-8">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/vovo-yellow.png"
-              alt="Vovo (swipe gauche)"
-              width={120} height={120}
-              className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
-              onClick={() => commitSwipe("left")}
-            />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/doro-vovo-red.png"
-              alt="Doro et Vovo (swipe haut)"
-              width={120} height={120}
-              className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
-              onClick={() => commitSwipe("up")}
-            />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/doro-blue.png"
-              alt="Doro (swipe droite)"
-              width={120} height={120}
-              className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
-              onClick={() => commitSwipe("right")}
-            />
-          </div>
+       {/* === BADGES — centrés en bas du deck === */}
+<div className="absolute inset-x-0 bottom-6 z-[100] flex justify-center gap-8 pointer-events-none">
+  {/* eslint-disable-next-line @next/next/no-img-element */}
+  <img
+    src="/vovo-yellow.png"
+    alt="Vovo (swipe gauche)"
+    width={120} height={120}
+    className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
+    onClick={() => commitSwipe("left")}
+  />
+  {/* eslint-disable-next-line @next/next/no-img-element */}
+  <img
+    src="/doro-vovo-red.png"
+    alt="Doro et Vovo (swipe haut)"
+    width={120} height={120}
+    className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
+    onClick={() => commitSwipe("up")}
+  />
+  {/* eslint-disable-next-line @next/next/no-img-element */}
+  <img
+    src="/doro-blue.png"
+    alt="Doro (swipe droite)"
+    width={120} height={120}
+    className="pointer-events-auto cursor-pointer drop-shadow-xl hover:scale-110 transition-transform"
+    onClick={() => commitSwipe("right")}
+  />
+</div>
         </div>
       </div>
-    </div>
   );
 }
 
