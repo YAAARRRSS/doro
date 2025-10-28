@@ -26,10 +26,9 @@ export default function SwipeDeck() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4">
-      {/* Deck container */}
+    <div className="min-h-screen w-full flex items-center justify-center p-4 pb-32">
+      {/* zone du deck */}
       <div className="relative w-full max-w-md">
-        {/* Card stack area */}
         <div className="aspect-[3/4] relative select-none z-10">
           <AnimatePresence initial={false}>
             {stack.map((p, i) => {
@@ -49,7 +48,7 @@ export default function SwipeDeck() {
             })}
           </AnimatePresence>
 
-          {/* Big emoji when swipe is committed */}
+          {/* Émoji géant au commit */}
           <AnimatePresence>
             {effectEmoji && (
               <motion.div
@@ -65,14 +64,15 @@ export default function SwipeDeck() {
             )}
           </AnimatePresence>
         </div>
+      </div>
 
-        {/* Bottom badges bar (overlapping the card a bit) */}
-        <div className="absolute left-0 right-0 -bottom-8 flex items-center justify-between px-6 z-20">
+      {/* FOOTER FIXE avec logos (visible même si la carte bouge) */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
+        <div className="flex items-center justify-center gap-8">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/vovo-yellow.png"
             alt="Vovo (swipe gauche)"
-            title="Vovo (swipe gauche)"
             className="h-20 md:h-24 w-auto cursor-pointer drop-shadow"
             onClick={() => commitSwipe("left")}
           />
@@ -80,7 +80,6 @@ export default function SwipeDeck() {
           <img
             src="/doro-vovo-red.png"
             alt="Doro et Vovo (swipe haut)"
-            title="Doro et Vovo (swipe haut)"
             className="h-20 md:h-24 w-auto cursor-pointer drop-shadow"
             onClick={() => commitSwipe("up")}
           />
@@ -88,7 +87,6 @@ export default function SwipeDeck() {
           <img
             src="/doro-blue.png"
             alt="Doro (swipe droite)"
-            title="Doro (swipe droite)"
             className="h-20 md:h-24 w-auto cursor-pointer drop-shadow"
             onClick={() => commitSwipe("right")}
           />
@@ -99,12 +97,7 @@ export default function SwipeDeck() {
 }
 
 function Card({
-  p,
-  isTop,
-  isNext,
-  onSwipe,
-  photoIndex,
-  setPhotoIndex,
+  p, isTop, isNext, onSwipe, photoIndex, setPhotoIndex,
 }: {
   p: Profile;
   isTop: boolean;
@@ -117,7 +110,7 @@ function Card({
   const y = useMotionValue(0);
   const rotate = useTransform(x, [-240, 0, 240], [-18, 0, 18]);
 
-  // Giant labels during drag (still there; we can tune later)
+  // texte géant pendant le drag
   const leftProg  = useTransform(x, [-10, -140], [0, 1], { clamp: true });
   const rightProg = useTransform(x, [ 10,  140], [0, 1], { clamp: true });
   const upProg    = useTransform(y, [-10, -140], [0, 1], { clamp: true });
@@ -130,7 +123,7 @@ function Card({
     if (dy < -t) return onSwipe("up");
   };
 
-  // Stack visual
+  // pile visible
   const baseScale = isTop ? 1 : isNext ? 0.965 : 0.93;
   const baseY = isTop ? 0 : isNext ? 10 : 22;
 
@@ -143,35 +136,35 @@ function Card({
       transition={{ type: "spring", stiffness: 300, damping: 28 }}
       style={{ zIndex: isTop ? 30 : isNext ? 20 : 10 }}
     >
+      {/* 👉👉 le conteneur CLIPPE vraiment l’image */}
       <motion.div
         drag={isTop}
         dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
         onDragEnd={handleDragEnd}
         style={{ x, y, rotate, willChange: "transform" }}
-        className="w-full h-full rounded-[40px] shadow-2xl overflow-hidden bg-black relative"
+        className="w-full h-full rounded-[48px] md:rounded-[56px] overflow-hidden bg-black relative ring-1 ring-black/5"
       >
-        {/* Photo (ALL uploads inherit rounding because container is rounded + overflow-hidden) */}
+        {/* l'image hérite des coins arrondis du parent (via rounded-inherit) */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={p.photos[photoIndex % p.photos.length]}
           alt={p.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-inherit"
           draggable={false}
           onDoubleClick={() => setPhotoIndex((n: number) => n + 1)}
         />
 
-        {/* Readability gradients */}
+        {/* lisibilité */}
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/70 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/50 to-transparent" />
 
-        {/* Info */}
+        {/* infos */}
         <div className="absolute bottom-4 left-4 right-4 text-white drop-shadow">
           <h2 className="text-2xl font-semibold">{p.name}</h2>
           <p className="text-sm opacity-90">{p.bio}</p>
-          <p className="text-xs opacity-70 mt-1">Double-tap la photo pour changer</p>
         </div>
 
-        {/* Giant labels while dragging (can be hidden if you prefer only emojis) */}
+        {/* textes géants au drag */}
         <motion.div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
           style={{ opacity: leftProg, scale: useTransform(leftProg, [0, 1], [0.92, 1]) }}>
           <span className="text-white text-6xl md:text-8xl font-extrabold drop-shadow-[0_2px_16px_rgba(0,0,0,0.6)]">VOVO</span>
